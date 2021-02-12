@@ -1,0 +1,22 @@
+{
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client",
+    "e2e"
+  ],
+  "scripts": {
+    "build:client": "yarn workspace node-react-file-upload-client build",
+    "dev": "yarn workspace node-react-file-upload-server dev",
+    "dev:debug": "yarn workspace node-react-file-upload-server dev:debug",
+    "heroku-postbuild": "yarn workspace node-react-file-upload-client build",
+    "start": "yarn workspace node-react-file-upload-server start",
+    "dev:cypress": "yarn workspace node-react-file-upload-server dev:e2e",
+    "e2e:open": "yarn workspace node-react-file-upload-e2e e2e:open",
+    "e2e:run": "yarn workspace node-react-file-upload-e2e e2e:run"
+  },
+  "engines": {
+    "node": "^14.15"
+  }
+}
