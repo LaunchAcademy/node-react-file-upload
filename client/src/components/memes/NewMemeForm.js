@@ -29,6 +29,11 @@ const NewMemeForm = (props) => {
     setUploadedImage({
       preview: URL.createObjectURL(acceptedImage[0])
     })
+
+    // // example for preview multiple images
+    // setUploadedImage(acceptedImage.map(file => Object.assign(file, {
+    //   preview: URL.createObjectURL(file)
+    // })))
   }
 
   const clearForm = () => {
