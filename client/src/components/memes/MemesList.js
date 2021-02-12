@@ -35,7 +35,7 @@ const MemesList = (props) => {
         body: newMeme
       })
       if (!response.ok) {
-        if (response.status === 404) {
+        if (response.status === 422) {
           const body = await response.json()
           setErrors(body.errors)
         } else {
