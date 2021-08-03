@@ -53,34 +53,34 @@ const RegistrationForm = () => {
     return setErrors(newErrors);
   };
 
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
     validateInput(userPayload);
-    if (Object.keys(errors).length === 0) {
-      fetch("/api/v1/users", {
-        method: "post",
-        headers: new Headers({
-          "Content-Type": "application/json",
-        }),
-        body: JSON.stringify(userPayload),
-      }).then((resp) => {
-        if (resp.ok) {
-          resp.json().then((user) => {
-            setShouldRedirect(true);
-          });
-        } else {
-          if (resp.status === 422) {
-            resp.json().then((errors) => {
-              const newServerErrors = translateServerErrors(errors.errors)
-              setServerErrors(newServerErrors)
-            })
-          } else {
-            const errorMessage = `${resp.status} (${resp.statusText})`;
-            const error = new Error(errorMessage);
-            throw error;
+    try {
+      if (Object.keys(errors).length === 0) {
+        const response = await fetch("/api/v1/users", {
+          method: "post",
+          body: JSON.stringify(userPayload),
+          headers: new Headers({
+            "Content-Type": "application/json",
+          }),
+        });
+        if (!response.ok) {
+          if (response.status === 422) {
+            const body = await response.json();
+            const newServerErrors = translateServerErrors(body.errors)
+            return setServerErrors(newServerErrors)
           }
+          const errorMessage = `${response.status} (${response.statusText})`;
+          const error = new Error(errorMessage);
+          throw error;
         }
-      })
+        const userData = await response.json();
+        console.log(userData);
+        return setShouldRedirect(true);
+      }
+    } catch (err) {
+      console.error(`Error in fetch: ${err.message}`);
     }
   };
 
