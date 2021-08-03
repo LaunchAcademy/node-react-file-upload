@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import FormError from "../layout/FormError";
+import ErrorList from "../shared/ErrorList"
+import translateServerErrors from "../../services/translateServerErrors"
 import config from "../../config";
 
 const RegistrationForm = () => {
@@ -10,14 +12,16 @@ const RegistrationForm = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [serverErrors, setServerErrors] = useState({})
 
   const [shouldRedirect, setShouldRedirect] = useState(false);
 
   const validateInput = (payload) => {
     setErrors({});
     const { email, password, passwordConfirmation } = payload;
-    const emailRegexp = config.validation.email.regexp;
+    const emailRegexp = config.validation.email.regexp.emailRegex;
     let newErrors = {};
+
     if (!email.match(emailRegexp)) {
       newErrors = {
         ...newErrors,
@@ -31,7 +35,7 @@ const RegistrationForm = () => {
         password: "is required",
       };
     }
-
+      
     if (passwordConfirmation.trim() === "") {
       newErrors = {
         ...newErrors,
@@ -46,7 +50,7 @@ const RegistrationForm = () => {
       }
     }
 
-    setErrors(newErrors);
+    return setErrors(newErrors);
   };
 
   const onSubmit = (event) => {
@@ -55,21 +59,28 @@ const RegistrationForm = () => {
     if (Object.keys(errors).length === 0) {
       fetch("/api/v1/users", {
         method: "post",
-        body: JSON.stringify(userPayload),
         headers: new Headers({
           "Content-Type": "application/json",
         }),
+        body: JSON.stringify(userPayload),
       }).then((resp) => {
         if (resp.ok) {
           resp.json().then((user) => {
             setShouldRedirect(true);
           });
         } else {
-          const errorMessage = `${resp.status} (${resp.statusText})`;
-          const error = new Error(errorMessage);
-          throw error;
+          if (resp.status === 422) {
+            resp.json().then((errors) => {
+              const newServerErrors = translateServerErrors(errors.errors)
+              setServerErrors(newServerErrors)
+            })
+          } else {
+            const errorMessage = `${resp.status} (${resp.statusText})`;
+            const error = new Error(errorMessage);
+            throw error;
+          }
         }
-      });
+      })
     }
   };
 
@@ -87,6 +98,7 @@ const RegistrationForm = () => {
   return (
     <div className="grid-container" onSubmit={onSubmit}>
       <h1>Register</h1>
+      <ErrorList errors={serverErrors} />
       <form>
         <div>
           <label>
