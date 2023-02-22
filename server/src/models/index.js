@@ -1,5 +1,5 @@
 // include all of your models here using CommonJS requires
-const User = require("./User.js")
 const Meme = require("./Meme.js")
+const User = require("./User.js")
 
-module.exports = { User, Meme };
+module.exports = { Meme, User }

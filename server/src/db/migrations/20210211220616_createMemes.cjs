@@ -6,7 +6,7 @@
  * @param {Knex} knex
  */
 exports.up = async (knex) => {
-  return knex.schema.createTable("memes", table => {
+  return knex.schema.createTable("memes", (table) => {
     table.bigIncrements("id").primary()
     table.string("title").notNullable()
     table.string("image").notNullable()

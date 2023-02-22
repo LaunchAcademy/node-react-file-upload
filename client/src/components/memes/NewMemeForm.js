@@ -4,17 +4,18 @@ import Dropzone from "react-dropzone"
 const NewMemeForm = (props) => {
   const [meme, setMeme] = useState({
     title: "",
-    image: {}
+    image: {},
   })
   const [uploadedImage, setUploadedImage] = useState({
-    preview: ""
+    preview: "",
+    name: "",
   })
 
   const handleChange = (event) => {
     event.preventDefault()
     setMeme({
       ...meme,
-      [event.currentTarget.name]: event.currentTarget.value
+      [event.currentTarget.name]: event.currentTarget.value,
     })
   }
 
@@ -22,12 +23,13 @@ const NewMemeForm = (props) => {
     // sets state for the image we want to post
     setMeme({
       ...meme,
-      image: acceptedImage[0]
+      image: acceptedImage[0],
     })
 
     // sets state for a preview of the one uploaded image
     setUploadedImage({
-      preview: URL.createObjectURL(acceptedImage[0])
+      preview: URL.createObjectURL(acceptedImage[0]),
+      name: acceptedImage[0].name,
     })
 
     // // example for preview multiple images
@@ -39,13 +41,13 @@ const NewMemeForm = (props) => {
   const clearForm = () => {
     setMeme({
       title: "",
-      image: {}
+      image: {},
     })
     setUploadedImage({
-      preview: ""
+      preview: "",
     })
   }
-  
+
   const handleSubmit = (event) => {
     event.preventDefault()
     const body = new FormData()
@@ -59,16 +61,11 @@ const NewMemeForm = (props) => {
     <form className="callout primary" onSubmit={handleSubmit}>
       <div>
         <label htmlFor="title"> Title </label>
-        <input 
-          id="title"
-          name="title"
-          value={meme.title}
-          onChange={handleChange}
-        />
+        <input id="title" name="title" value={meme.title} onChange={handleChange} />
       </div>
 
       <Dropzone onDrop={handleImageUpload}>
-        {({getRootProps, getInputProps}) => (
+        {({ getRootProps, getInputProps }) => (
           <section>
             <div {...getRootProps()}>
               <input {...getInputProps()} />
@@ -78,19 +75,10 @@ const NewMemeForm = (props) => {
         )}
       </Dropzone>
 
-      <img src={uploadedImage.preview} />
+      <img src={uploadedImage.preview} alt={uploadedImage.name} className="sized-image" />
       <div className="button-group">
-        <input 
-          className="button"
-          type="submit"
-          value="Add"
-        />
-        <input 
-          className="button"
-          type="button" 
-          value="Clear"
-          onClick={clearForm}
-        />
+        <input className="button" type="submit" value="Add" />
+        <input className="button" type="button" value="Clear" onClick={clearForm} />
       </div>
     </form>
   )

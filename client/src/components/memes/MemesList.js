@@ -30,9 +30,9 @@ const MemesList = (props) => {
       const response = await fetch("/api/v1/memes", {
         method: "POST",
         headers: {
-          "Accept": "image/jpeg"
+          Accept: "image/jpeg",
         },
-        body: newMeme
+        body: newMeme,
       })
       if (!response.ok) {
         if (response.status === 422) {
@@ -43,22 +43,14 @@ const MemesList = (props) => {
         }
       }
       const body = await response.json()
-      setMemes([
-        ...memes,
-        body.meme
-      ])
+      setMemes([...memes, body.meme])
     } catch (error) {
       console.error(`Error in addMeme Fetch: ${error.message}`)
     }
   }
 
   const memeTiles = memes.map((meme) => {
-    return (
-      <MemeTile
-        key={meme.id}
-        {...meme  }
-      />
-    )
+    return <MemeTile key={meme.id} {...meme} />
   })
 
   return (

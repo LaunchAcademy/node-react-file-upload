@@ -25,7 +25,7 @@ memesRouter.post("/", uploadImage.single("image"), async (req, res) => {
     const formData = {
       ...bodyInput,
       image: req.file.location,
-      userId: user.id
+      userId: user.id,
     }
     const meme = await Meme.query().insertAndFetch(formData)
     return res.status(201).json({ meme })

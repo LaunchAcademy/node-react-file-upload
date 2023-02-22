@@ -16,7 +16,7 @@ const uploadImage = multer({
   storage: multerS3({
     acl: "public-read",
     s3: s3,
-    bucket: "node-memes-development",
+    bucket: config.s3Bucket.name,
     key: function (req, file, cb) {
       cb(null, Date.now().toString())
     },

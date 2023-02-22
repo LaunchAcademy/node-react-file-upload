@@ -1,5 +1,3 @@
-const objection = require("objection")
-
 const Model = require("./Model")
 
 class Meme extends Model {
@@ -14,8 +12,8 @@ class Meme extends Model {
       properties: {
         title: { type: "string" },
         image: { type: "string" },
-        userId: { type: ["integer", "string"] }
-      }
+        userId: { type: ["integer", "string"] },
+      },
     }
   }
 
@@ -28,9 +26,9 @@ class Meme extends Model {
         modelClass: User,
         join: {
           from: "memes.userId",
-          to: "users.id"
-        }
-      }
+          to: "users.id",
+        },
+      },
     }
   }
 }

@@ -1,61 +1,57 @@
-import React, { useState } from "react";
-import FormError from "../layout/FormError";
-import ErrorList from "../shared/ErrorList"
-import translateServerErrors from "../../services/translateServerErrors"
-import config from "../../config";
+import React, { useState } from "react"
+import FormError from "../layout/FormError"
+import config from "../../config"
 
 const RegistrationForm = () => {
   const [userPayload, setUserPayload] = useState({
     email: "",
     password: "",
     passwordConfirmation: "",
-  });
+  })
 
-  const [errors, setErrors] = useState({});
-  const [serverErrors, setServerErrors] = useState({})
+  const [errors, setErrors] = useState({})
 
-  const [shouldRedirect, setShouldRedirect] = useState(false);
+  const [shouldRedirect, setShouldRedirect] = useState(false)
 
   const validateInput = (payload) => {
-    setErrors({});
-    const { email, password, passwordConfirmation } = payload;
-    const emailRegexp = config.validation.email.regexp.emailRegex;
-    let newErrors = {};
-
+    setErrors({})
+    const { email, password, passwordConfirmation } = payload
+    const emailRegexp = config.validation.email.regexp.emailRegex
+    let newErrors = {}
     if (!email.match(emailRegexp)) {
       newErrors = {
         ...newErrors,
         email: "is invalid",
-      };
+      }
     }
 
     if (password.trim() == "") {
       newErrors = {
         ...newErrors,
         password: "is required",
-      };
+      }
     }
-      
+
     if (passwordConfirmation.trim() === "") {
       newErrors = {
         ...newErrors,
         passwordConfirmation: "is required",
-      };
+      }
     } else {
       if (passwordConfirmation !== password) {
         newErrors = {
           ...newErrors,
           passwordConfirmation: "does not match password",
-        };
+        }
       }
     }
 
-    return setErrors(newErrors);
-  };
+    setErrors(newErrors)
+  }
 
   const onSubmit = async (event) => {
-    event.preventDefault();
-    validateInput(userPayload);
+    event.preventDefault()
+    validateInput(userPayload)
     try {
       if (Object.keys(errors).length === 0) {
         const response = await fetch("/api/v1/users", {
@@ -64,42 +60,35 @@ const RegistrationForm = () => {
           headers: new Headers({
             "Content-Type": "application/json",
           }),
-        });
+        })
         if (!response.ok) {
-          if (response.status === 422) {
-            const body = await response.json();
-            const newServerErrors = translateServerErrors(body.errors)
-            return setServerErrors(newServerErrors)
-          }
-          const errorMessage = `${response.status} (${response.statusText})`;
-          const error = new Error(errorMessage);
-          throw error;
+          const errorMessage = `${response.status} (${response.statusText})`
+          const error = new Error(errorMessage)
+          throw error
         }
-        const userData = await response.json();
-        console.log(userData);
-        return setShouldRedirect(true);
+        const userData = await response.json()
+        setShouldRedirect(true)
       }
     } catch (err) {
-      console.error(`Error in fetch: ${err.message}`);
+      console.error(`Error in fetch: ${err.message}`)
     }
-  };
+  }
 
   const onInputChange = (event) => {
     setUserPayload({
       ...userPayload,
       [event.currentTarget.name]: event.currentTarget.value,
-    });
-  };
+    })
+  }
 
   if (shouldRedirect) {
-    location.href = "/";
+    location.href = "/"
   }
 
   return (
-    <div className="grid-container" onSubmit={onSubmit}>
+    <div className="grid-container">
       <h1>Register</h1>
-      <ErrorList errors={serverErrors} />
-      <form>
+      <form onSubmit={onSubmit}>
         <div>
           <label>
             Email
@@ -136,7 +125,7 @@ const RegistrationForm = () => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default RegistrationForm;
+export default RegistrationForm

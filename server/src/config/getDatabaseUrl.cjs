@@ -5,7 +5,7 @@ const getDatabaseUrl = (nodeEnv) => {
       test: "postgres://postgres:postgres@localhost:5432/node-react-file-upload_test",
       e2e: "postgres://postgres:postgres@localhost:5432/node-react-file-upload_e2e",
     }[nodeEnv] || process.env.DATABASE_URL
-  );
-};
+  )
+}
 
-module.exports = getDatabaseUrl;
+module.exports = getDatabaseUrl
